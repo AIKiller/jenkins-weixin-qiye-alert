@@ -84,5 +84,5 @@ Jenkins 插件全局命令
 
 1. 复制由上述命令创建的 ./target/XXXX.hpi 文件到$JENKINS_HOME/plugins 目录，请不要忘记重启jenkins服务。
 
-2. 或者使用插件管理控制台（http://example.com:8080/pluginManager/advanced)上传该hpi文件。注意：上传完毕之后，必须重启jenkins服务
+2. 或者使用插件管理控制台（http://example.com:8080/pluginManager/advanced) 上传该hpi文件。注意：上传完毕之后，必须重启jenkins服务
 
