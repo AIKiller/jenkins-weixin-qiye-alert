@@ -1,0 +1,200 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<configuration scan="false" scanPeriod="60 seconds" debug="false">
+
+    <!-- log输出目录 -->
+    <property name="LOG_HOME" value="D:/wechatAlertLogs" />
+    <!-- 项目名称 -->
+    <property name="APP_NAME" value="jenkins-weixin-qiye-alert" />
+    <!-- 项目端口号 -->
+    <property name="APP_PORT" value="8080" />
+
+    <!-- 控制台和文件的日志格式 -->
+    <!-- %method和%line性能较低，如果不太介意打印的方法和行号，强烈建议取消 -->
+    <property name="CONSOLE_LOG_PATTERN" value="%date{HH:mm:ss.SSS}[%thread][%-5level]%logger.%method#%line - %msg%n" />
+    <property name="FILE_LOG_PATTERN" value="%date{HH:mm:ss.SSS}[%thread][%-5level]%logger.%method#%line - %msg%n" />
+
+    <!-- Logstash 服务器地址和端口 -->
+    <property name="LOGSTASH_SERVER" value="" />
+    <property name="LOGSTASH_PORT" value="" />
+
+
+    <logger name="org.springframework" level="WARN" />
+    <logger name="org.springframework.web" level="WARN" />
+    <logger name="org.springframework.security" level="WARN" />
+    <logger name="org.springframework.cache" level="WARN" />
+    <logger name="org.springframework.beans" level="WARN" />
+    <logger name="shunneng.ycyyservice" level="DEBUG" />
+
+    <!-- 输出日志到控制台 -->
+    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+
+        <!-- 控制台输出性能较低。只打印ERRROR,其他信息从日志或者elasticsearch查询 -->
+        <filter class="ch.qos.logback.classic.filter.LevelFilter">
+            <level>ERROR</level>
+            <onMatch>ACCEPT</onMatch>
+            <onMismatch>DENY</onMismatch>
+        </filter>
+
+        <encoder>
+            <pattern>${CONSOLE_LOG_PATTERN}</pattern>
+            <charset>utf-8</charset>
+        </encoder>
+    </appender>
+
+    <!-- 输出日志到文件  -->
+
+    <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <!-- 文件名称 -->
+        <FileNamePattern>${LOG_HOME}/${APP_NAME}.%d{yyyy-MM-dd}.log</FileNamePattern>
+        <!-- 编码字符集和日志格式 -->
+        <encoder class="ch.qos.logback.core.encoder.LayoutWrappingEncoder">
+	        <layout class="org.skywalking.apm.toolkit.log.logback.v1.x.TraceIdPatternLogbackLayout">
+	                <Pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%tid] [%thread] %-5level %logger{36} -%msg%n</Pattern>
+	        </layout>
+		</encoder>
+
+        <!-- 日志过大后，滚动输出日志
+        <rollingPolicy class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
+            <fileNamePattern>${LOG_HOME}/${APP_NAME}.%i.log</fileNamePattern>
+        </rollingPolicy>-->
+        <!-- 限定单日志大小-->
+        <triggeringPolicy class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
+            <MaxFileSize>100MB</MaxFileSize>
+        </triggeringPolicy> 
+
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+          <!-- rollover daily -->
+          <fileNamePattern>${LOG_HOME}/${APP_NAME}%d{yyyy-MM-dd}.%i.log</fileNamePattern>
+          <maxHistory>240</maxHistory>
+          <timeBasedFileNamingAndTriggeringPolicy  class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+            <!-- or whenever the file size reaches 100MB -->
+            <maxFileSize>50MB</maxFileSize>
+          </timeBasedFileNamingAndTriggeringPolicy>
+        </rollingPolicy>
+    </appender>
+
+    <!-- 日志输出到日志搜集框架  -->
+<!--     <appender name="LOGSTASH" class="net.logstash.logback.appender.LogstashSocketAppender"> -->
+<!--         logstash 服务地址  -->
+<!--         <host>${LOGSTASH_SERVER}</host> -->
+<!--         logstash 端口 -->
+<!--         <port>${LOGSTASH_PORT}</port> -->
+<!--         自定义字段，增加项目名称和端口  -->
+<!--         <customFields>{"app_name":"${APP_NAME}","app_port":"${APP_PORT}"}</customFields> -->
+<!--     </appender> -->
+
+    <!-- 异步批量(512)打印日志，在异常关闭时，有可能会有部分日志丢失 -->
+    <appender name="ASYNC" class="ch.qos.logback.classic.AsyncAppender">
+        <queueSize>512</queueSize>
+        <appender-ref ref="FILE" />
+    </appender>
+
+    <!-- 允许动态修改日志级别 -->
+    <contextListener class="ch.qos.logback.classic.jul.LevelChangePropagator">
+        <resetJUL>true</resetJUL>
+    </contextListener>
+    
+     <!--不同业务逻辑的日志打印到不同文件-->
+    <appender name="zfAppender" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <!-- 文件名称 -->
+        <FileNamePattern>${LOG_HOME}/${APP_NAME}.%d{yyyy-MM-dd}.log</FileNamePattern>
+        <!-- 编码字符集和日志格式 -->
+        <encoder class="ch.qos.logback.core.encoder.LayoutWrappingEncoder">
+
+			<layout class="org.skywalking.apm.toolkit.log.logback.v1.x.TraceIdPatternLogbackLayout">
+
+                <Pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%tid] [%thread] %-5level %logger{36} -%msg%n</Pattern>
+
+        </layout>
+
+		</encoder>
+
+        <!-- 日志过大后，滚动输出日志
+        <rollingPolicy class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
+            <fileNamePattern>${LOG_HOME}/${APP_NAME}.%i.log</fileNamePattern>
+        </rollingPolicy>-->
+        <!-- 限定单日志大小-->
+        <triggeringPolicy class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
+            <MaxFileSize>50MB</MaxFileSize>
+        </triggeringPolicy> 
+
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+          <!-- rollover daily -->
+          <fileNamePattern>${LOG_HOME}/${APP_NAME}.zf.%d{yyyy-MM-dd}.%i.log</fileNamePattern>
+          <maxHistory>240</maxHistory>
+          <timeBasedFileNamingAndTriggeringPolicy  class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+            <!-- or whenever the file size reaches 100MB -->
+            <maxFileSize>50MB</maxFileSize>
+          </timeBasedFileNamingAndTriggeringPolicy>
+        </rollingPolicy>
+    </appender>
+
+    <appender name="yyAppender" class="ch.qos.logback.core.rolling.RollingFileAppender">
+<!-- 文件名称 -->
+        <FileNamePattern>${LOG_HOME}/${APP_NAME}.%d{yyyy-MM-dd}.log</FileNamePattern>
+        <!-- 编码字符集和日志格式 -->
+        <encoder class="ch.qos.logback.core.encoder.LayoutWrappingEncoder">
+	        <layout class="org.skywalking.apm.toolkit.log.logback.v1.x.TraceIdPatternLogbackLayout">
+	                <Pattern>%d{yyyy-MM-dd HH:mm:ss.SSS} [%tid] [%thread] %-5level %logger{36} -%msg%n</Pattern>
+	        </layout>
+		</encoder>
+
+        <!-- 日志过大后，滚动输出日志
+        <rollingPolicy class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
+            <fileNamePattern>${LOG_HOME}/${APP_NAME}.%i.log</fileNamePattern>
+        </rollingPolicy>-->
+        <!-- 限定单日志大小-->
+        <triggeringPolicy class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
+            <MaxFileSize>50MB</MaxFileSize>
+        </triggeringPolicy> 
+
+        <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+          <!-- rollover daily -->
+          <fileNamePattern>${LOG_HOME}/${APP_NAME}.yy.%d{yyyy-MM-dd}.%i.log</fileNamePattern>
+          <maxHistory>240</maxHistory>
+          <timeBasedFileNamingAndTriggeringPolicy  class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+            <!-- or whenever the file size reaches 100MB -->
+            <maxFileSize>50MB</maxFileSize>
+          </timeBasedFileNamingAndTriggeringPolicy>
+        </rollingPolicy>
+    </appender>
+
+    <!-- 不同的业务逻辑日志打印到指定文件夹-->
+    <!-- <logger name="zflog" additivity="false" level="INFO">
+        <appender-ref ref="zfAppender"/>
+    </logger>
+    <logger name="yylog" additivity="false" level="INFO">
+        <appender-ref ref="yyAppender"/>
+    </logger> -->
+<!-- 	<appender name="KafkaAppender" class="com.github.danielwegener.logback.kafka.KafkaAppender"> -->
+<!--     <encoder class="com.github.danielwegener.logback.kafka.encoding.LayoutKafkaMessageEncoder"> -->
+<!--         <layout class="net.logstash.logback.layout.LogstashLayout" > -->
+<!--             <includeContext>true</includeContext> -->
+<!--             <includeCallerData>true</includeCallerData> -->
+<!--             <customFields>{"system":"test"}</customFields> -->
+<!--             <fieldNames class="net.logstash.logback.fieldnames.ShortenedFieldNames"/> -->
+<!--         </layout> -->
+<!--         <charset>UTF-8</charset> -->
+<!--     </encoder> -->
+<!--     kafka topic 需要与配置文件里面的topic一致 否则kafka会沉默并鄙视你 -->
+<!--     <topic>applog</topic> -->
+<!--     <keyingStrategy class="com.github.danielwegener.logback.kafka.keying.HostNameKeyingStrategy" /> -->
+<!--     <deliveryStrategy class="com.github.danielwegener.logback.kafka.delivery.AsynchronousDeliveryStrategy" /> -->
+<!--     <producerConfig>bootstrap.servers=localhost:9092</producerConfig> -->
+<!-- </appender> -->
+
+<!--你可能还需要加点这个玩意儿-->
+<!-- <logger name="Application_ERROR"> -->
+<!--    <appender-ref ref="KafkaAppender"/> -->
+<!-- </logger> -->
+    <!-- 默认输出INFO级别日志 -->
+    <root level="INFO">
+    	<appender-ref ref="FILE" />
+<!--         <appender-ref ref="CONSOLE" /> -->
+<!--         <appender-ref ref="ASYNC" /> -->
+<!--         <appender-ref ref="LOGSTASH" /> -->
+<!--         <appender-ref ref="KafkaAppender" /> -->
+    </root>
+
+</configuration>
