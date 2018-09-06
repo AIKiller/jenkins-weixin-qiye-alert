@@ -8,4 +8,15 @@
 	<f:entry title="Weixin connection" field="weixinConnection">
     	<f:select/>
 	</f:entry>
+	<f:entry title="微信企业号部门id" field="partyId">
+		<f:textbox />
+	</f:entry>
+	
+	<f:entry title="被推送信息的用户id" field="userId">
+		<f:textbox />
+	</f:entry>
+	
+	<f:entry title="指定推送标签名称" field="tagName">
+		<f:textbox  />
+	</f:entry>
 </j:jelly>

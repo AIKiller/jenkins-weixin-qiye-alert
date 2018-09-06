@@ -4,4 +4,5 @@ public interface WeixinService {
     void success();
     void failure();
     void aborted();
+    void unstable();
 }

@@ -1,0 +1,8 @@
+*.log
+*.jar
+.idea/*
+.project
+jenkins-weixin-qiye-alert.iml
+.settings
+target
+work

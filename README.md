@@ -38,16 +38,26 @@ Jenkins Weixin Message Publisher Plugin
 
 1. 配置Credentials认证。进入Credentials界面，点击Add Credentials添加新的认证，在Kind中选择Weixin API token配置企业微信号的相关信息。
 
-![](Credentials.png)
+![](http://ww1.sinaimg.cn/large/93d61c99ly1fuzj0dxsc4j20pq0d5t93.jpg)
 
 2. 进入系统管理-》系统设置，进入Weixin Message Publisher配置段。点击添加可设置微信链接，包括：链接名称、认证、部门id、用户id以及标签名称。同时可点击高级，设置jenkins服务器地址，用于微信通知的跳转页面链接。
 
-![](config.png)
+![](http://ww1.sinaimg.cn/large/93d61c99ly1fuzj39eihcj216008uwez.jpg)
 
 3. 进入job设置界面，点击构建后操作，选择之前配置的链接名称。 
-![](job.png)
-
-提示：本插件已适配pipeline项目
+![](http://ww1.sinaimg.cn/large/93d61c99ly1fuzj4o5vhdj214109s74r.jpg)
+同时，该插件适配pipeline项目，如下所示:
+```js
+post {
+        // No post conditions specified
+        always {
+            weixin partyId: "$weixin_partyId",
+            tagName: "$weixin_tagName",
+            userId: "$weixin_userId",
+            weixinConnection: 'default'
+        }
+    }
+```
 -------------------------------------
 
 开发

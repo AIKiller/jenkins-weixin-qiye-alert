@@ -40,12 +40,7 @@ public class WeixinConnection {
 	private String name;
 	//认证id
 	private String weixinTokenId;
-	//微信企业号部门id
-	private String partyId;
-	//微信企业号用户id
-	private String userId;
-	//消息推送的标签名称
-	private String tagName;
+
 	
 	private String url;
 	//空字符串
@@ -70,29 +65,12 @@ public class WeixinConnection {
 		return weixinTokenId;
 	}
 
-
-	public String getPartyId() {
-		return partyId;
-	}
-
-
-	public String getUserId() {
-		return userId;
-	}
-
-    public String getTagName() {
-		return tagName;
-	}
-
 	//用来获取界面上设置的字段信息
     @DataBoundConstructor
-    public WeixinConnection(String name,String weixinTokenId, String partyId, String userId,String tagName,String url) {
+    public WeixinConnection(String name,String weixinTokenId,String url) {
         super();
         this.name 			= Util.fixNull(name);
         this.weixinTokenId 	= Util.fixNull(weixinTokenId);
-        this.partyId 		= Util.fixNull(partyId);
-        this.userId 		= Util.fixNull(userId);
-        this.tagName 		= Util.fixNull(tagName);
         this.url			= Util.fixNull(url);
         
     }
