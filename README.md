@@ -58,6 +58,22 @@ post {
         }
     }
 ```
+4. 我们公司的项目代码是放在GitLab上的，拉取GitLab上项目代码的插件没有设置关于pipeline的全局变量，因此无法获得分支的信息。所以公司项目是以参数化的形式启动，分支信息通过参数获取的。如下所示：
+
+![](http://ww1.sinaimg.cn/large/93d61c99ly1fuzjrlkmi8j20d50ke3zd.jpg)
+
+相关项目设置：
+![](http://ww1.sinaimg.cn/large/93d61c99ly1fuzjsgmembj20yn0hh3zg.jpg)
+![](http://ww1.sinaimg.cn/large/93d61c99ly1fuzjsut95yj20yn0iqjsb.jpg)
+![](http://ww1.sinaimg.cn/large/93d61c99ly1fuzjtfo83aj20yl0hjgmn.jpg)
+
+-------------------------------------
+TODO
+===========
+- [x] 增加微信通知回调地址。
+- [x] 增加凭证信息设置支持。
+- [] 修复分支无法获取的bug。
+
 -------------------------------------
 
 开发
